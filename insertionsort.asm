@@ -4,11 +4,13 @@
 	message: .asciiz "Fim loop"
 .text
 
-# $t7 = elemento do vetor
+# $t7 = elemento[i] do vetor
 # $t0 = indice i (leitura do vetor)
 # $t1 = indice k (percorre todo o vetor)
 # $t2 = indice m (indice menor)
-# $t4
+# $t4 = indice k' ou indice y (percorre array no menor)
+# $t5 = elemento[k'] do vetor
+# $t6 = elemento[m] do vetor
 
 main:  
 	li $v0, 4 #mensagem para entrada:
@@ -29,28 +31,28 @@ continue:
 	addi $t1, $zero, 0
 	
 ordena: 
-	bgt $t1, 16, continue2 #menor:
-	addi $t0, $t3, 0
-	addi $t2, $t0, 0
+	bgt $t1, 12, continue2 #menor:
+	addi $t2, $t1, 0
+	addi $t4, $t1, 4
 		
-while3: #condicao while
-	bgt $t0, 16, continue3 #incremento
-	addi $t0, $t0, 4 #compara arrays:
-	lw $t5, array1($t0)
+menor: #condicao while
+	bgt $t4, 16, swap #incremento
+	lw $t5, array1($t4)
 	lw  $t6, array1($t2)
-	blt $t5, $t6, posicaomenor	
-	j while3
+	blt $t5, $t6, posicaomenor
+	addi $t4, $t4, 4 #compara arrays:	
+	j menor
 			
 posicaomenor:
-	addi $t2, $t0, 0
+	addi $t2, $t4, 0
 				
-continue3: #fim menor
-	lw $t9, array1($t1) #troca:
-	lw $t8, array1($t2)
-	sw $t9, array1($t2)
-	sw $t8, array1($t1) #fim troca
+swap: #fim menor
+	lw $t5, array1($t1) #troca:
+	lw $t6, array1($t2)
+	sw $t6, array1($t1)
+	sw $t5, array1($t2) #fim troca
 	addi $t1, $t1, 4
-	j while2	
+	j ordena	
 		
 continue2:	
 	addi $t0, $zero, 0
